@@ -141,7 +141,7 @@ namespace menu {
                     s.l + s.w / 2 - s.downArrow.width / 2,
                     s.t + s.h - s.downArrow.height - 2);
             }
-            // TODO: Shadow effect w/ gray dots off right and bottom sides
+            // TODO: Shadow effect w/ gray dots off right and bottom sides iff this = top element
             // TODO: incl icon in math, draw it
             this.count++;
         }
@@ -162,8 +162,10 @@ namespace menu {
                 }
                 case ButtonId.Up: {
                     if (this.c - s.cols >= 0) {
+                        // bump up if you can
                         this.c -= s.cols;
                     } else {
+                        // otherwise find lowest element in same col
                         this.c = Math.floor((this.contents.length - 1) / s.cols) * s.cols + this.c;
                         if (this.c >= this.contents.length) {
                             this.c -= s.cols;
@@ -173,30 +175,35 @@ namespace menu {
                 }
                 case ButtonId.Down: {
                     if (this.c + s.cols < this.contents.length) {
+                         // bump down one row if you can
                         this.c += s.cols;
+                    } else if (Math.floor((this.contents.length - 1) / s.cols) != Math.floor(this.c / s.cols)) {
+                        // else bump down to highest element of next row if one exists
+                        this.c = this.contents.length - 1;
                     } else {
-                        if (Math.floor((this.contents.length - 1) / s.cols) != Math.floor(this.c / s.cols)) {
-                            this.c = this.contents.length - 1;
-                        } else {
-                            this.c = this.c % s.cols;
-                        }
+                        // else return to element in same col in row 0
+                        this.c = this.c % s.cols;
                     }
                     break;
                 }
                 case ButtonId.Left: {
                     if (this.c % s.cols !== 0) {
+                        // move left if possible
                         if (this.c - 1 >= 0) {
                             this.c -= 1;
                         }
                     } else if (this.c + 1 < this.contents.length) {
+                        // if in col 0, bump around to the right most col in this row
                         this.c = Math.min(this.c + s.cols - 1, this.contents.length - 1);
                     }
                     break;
                 }
                 case ButtonId.Right: {
                     if (this.c % s.cols === s.cols - 1 || this.c >= this.contents.length - 1) {
+                        // bump around to leftmost col in this row if in rightmost col
                         this.c -= this.c % s.cols;
                     } else if (this.c + 1 < this.contents.length) {
+                        // else bump right if possible
                         this.c += 1;
                     }
                     break;
@@ -283,7 +290,7 @@ namespace menu {
                 }
             ];
 
-            // test elements
+            // <test elements>
             for (let i = 0; i < 31; i++) {
                 let lorem = String.fromCharCode(Math.randomRange(65, 90));
                 for (let j = Math.randomRange(5, 12); j >= 0; j--) {
@@ -297,6 +304,7 @@ namespace menu {
                     }
                 );
             }
+            // <\ test elements>
         }
     }
 
