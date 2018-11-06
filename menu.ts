@@ -11,6 +11,7 @@ namespace menu {
         w: number; // width
         h: number; // height
         rows: number;
+        cols?: number;
 
         offX?: number; // x offset from left
         offY?: number; // y offset from top
@@ -37,6 +38,7 @@ namespace menu {
             this.style = s;
 
             // potentially change these to === undefined checks, when that gets fixed
+            if (!s.cols) s.cols = 2;
             if (!s.offX) s.offX = 5;
             if (!s.offY) s.offY = 7;
             if (!s.mc) s.mc = 0xF;
@@ -83,13 +85,13 @@ namespace menu {
             if (!this.active) return;
 
             let s = this.style;
-            const displayable = (s.w / 2 - 4) / s.f.charWidth;
+            const displayable = (s.w / s.cols - 4) / s.f.charWidth; // fix to account for gutter between cols
 
             draw.util.borderedBox(s.l, s.t,
                 s.w, s.h,
                 s.mc, s.bc);
 
-            const firstDisplay = this.c / 2 >= s.rows ? this.c - (this.c % (2 * s.rows)) : 0;
+            const firstDisplay = this.c / s.cols >= s.rows ? this.c - (this.c % (s.cols * s.rows)) : 0;
 
             // reset count on view change
             if (this.oldDisplay != firstDisplay) this.count = 0;
@@ -97,11 +99,11 @@ namespace menu {
 
             for (let i = 0; i < s.rows; i++) {
                 const y = s.t + s.offY + i * (s.h - s.offY) / s.rows;
-                for (let j = 0; j < 2; j++) { // I guess generalize this and the actions to n cols
-                    const curr = 2 * i + j;
+                for (let j = 0; j < s.cols; j++) { // I guess generalize this and the actions to n cols
+                    const curr = s.cols * i + j;
                     let element = this.contents[firstDisplay + curr];
                     if (element) {
-                        const x = s.l + s.offX + j * s.w / 2;
+                        const x = s.l + s.offX + j * s.w / s.cols;
 
                         let toDisplay = element.text;
                         // scroll item iff too long to display
@@ -136,6 +138,7 @@ namespace menu {
         }
 
         action(button: ButtonId) {
+            const s = this.style;
             switch (button) {
                 case ButtonId.A: {
                     let selectedElement = this.contents[this.c];
@@ -149,49 +152,43 @@ namespace menu {
                     break;
                 }
                 case ButtonId.Up: {
-                    if (this.c - 2 >= 0) {
-                        this.c -= 2;
+                    if (this.c - s.cols >= 0) {
+                        this.c -= s.cols;
                     } else {
-                        const curr = this.c;
-                        this.c = this.contents.length - 1;
-                        if ((this.c % 2 == 0) !== (curr == 0)) {
-                            this.c -= 1;
+                        this.c = Math.floor((this.contents.length - 1) / s.cols) * s.cols + this.c;
+                        if (this.c >= this.contents.length) {
+                            this.c -= s.cols;
                         }
-                        this.c = Math.max(this.c, 0);
                     }
                     break;
                 }
                 case ButtonId.Down: {
-                    if (this.c + 2 < this.contents.length) {
-                        this.c += 2;
-                    } else if (this.c + 1 < this.contents.length && this.c % 2 == 1) {
-                        this.c += 1;
+                    if (this.c + s.cols < this.contents.length) {
+                        this.c += s.cols;
                     } else {
-                        this.c = this.c % 2;
+                        if (Math.floor((this.contents.length - 1) / s.cols) != Math.floor(this.c / s.cols)) {
+                            this.c = this.contents.length - 1;
+                        } else {
+                            this.c = this.c % s.cols;
+                        }
                     }
                     break;
                 }
                 case ButtonId.Left: {
-                    if (this.c % 2 == 1) {
+                    if (this.c % s.cols !== 0) {
                         if (this.c - 1 >= 0) {
                             this.c -= 1;
                         }
-                    } else {
-                        if (this.c + 1 < this.contents.length) {
-                            this.c += 1
-                        }
+                    } else if (this.c + 1 < this.contents.length) {
+                        this.c = Math.min(this.c + s.cols - 1, this.contents.length - 1);
                     }
                     break;
                 }
                 case ButtonId.Right: {
-                    if (this.c % 2 == 0) {
-                        if (this.c + 1 < this.contents.length) {
-                            this.c += 1;
-                        }
-                    } else {
-                        if (this.c - 1 >= 0) {
-                            this.c -= 1
-                        }
+                    if (this.c % s.cols === s.cols - 1 || this.c >= this.contents.length - 1) {
+                        this.c -= this.c % s.cols;
+                    } else if (this.c + 1 < this.contents.length) {
+                        this.c += 1;
                     }
                     break;
                 }
@@ -251,7 +248,8 @@ namespace menu {
                 t: 20,
                 w: 120,
                 h: 80,
-                rows: 7
+                rows: 7,
+                cols: 4
             }
             super(s);
             this.contents = [
@@ -277,7 +275,7 @@ namespace menu {
             ];
 
             // test elements
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 31; i++) {
                 let lorem = String.fromCharCode(Math.randomRange(65, 90));
                 for (let j = Math.randomRange(5, 12); j >= 0; j--) {
                     lorem += String.fromCharCode(Math.randomRange(97, 122));
