@@ -32,6 +32,7 @@ namespace core {
         if (!focusStack.length) return;
         focus = focusStack.pop();
 
+        // handle continuous presses more appropriately? repeat every 250 ~ 500 ms?
         controller.A.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.A));
         controller.B.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.B));
         controller.left.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.Left));

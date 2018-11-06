@@ -11,7 +11,8 @@
         "menu.ts",
         "status.ts",
         "core.ts",
-        "util.ts"
+        "util.ts",
+        "monster.ts"
     ],
     "testFiles": [
         "test.ts"

@@ -36,7 +36,7 @@ namespace menu {
         constructor(s: MenuStyle) {
             this.style = s;
 
-            // potentially change these to === undefined checks for
+            // potentially change these to === undefined checks, when that gets fixed
             if (!s.offX) s.offX = 5;
             if (!s.offY) s.offY = 7;
             if (!s.mc) s.mc = 0xF;
@@ -95,22 +95,25 @@ namespace menu {
             if (this.oldDisplay != firstDisplay) this.count = 0;
             this.oldDisplay = firstDisplay;
 
-            for (let i = 0; i < 2 * s.rows; i++) {
-                let element = this.contents[firstDisplay + i];
-                if (element) {
-                    const x = s.l + s.offX + (i % 2) * s.w / 2;
-                    const y = s.t + s.offY + Math.floor(i / 2) * (s.h - s.offY) / s.rows;
+            for (let i = 0; i < s.rows; i++) {
+                const y = s.t + s.offY + i * (s.h - s.offY) / s.rows;
+                for (let j = 0; j < 2; j++) { // I guess generalize this and the actions to n cols
+                    const curr = 2 * i + j;
+                    let element = this.contents[firstDisplay + curr];
+                    if (element) {
+                        const x = s.l + s.offX + j * s.w / 2;
 
-                    let toDisplay = this.contents[firstDisplay + i].text;
-                    // scroll item iff too long
-                    if (toDisplay.length > displayable) {
-                        const firstInd = (this.count / 15) % (toDisplay.length);
-                        toDisplay = toDisplay.substr((firstInd < 3 ? 0 : firstInd - 3), displayable);
-                    }
+                        let toDisplay = element.text;
+                        // scroll item iff too long to display
+                        if (toDisplay.length > displayable) {
+                            const firstInd = (this.count / 15) % (toDisplay.length);
+                            toDisplay = toDisplay.substr((firstInd < 3 ? 0 : firstInd - 3), displayable);
+                        }
 
-                    screen.print(toDisplay, x, y, s.mc, s.f);
-                    if (i + firstDisplay == this.c) {
-                        screen.drawTransparentImage(s.selectArrow, x - 3, y + 1)
+                        screen.print(toDisplay, x, y, s.mc, s.f);
+                        if (firstDisplay + curr == this.c) {
+                            screen.drawTransparentImage(s.selectArrow, x - 3, y + 1)
+                        }
                     }
                 }
             }
@@ -126,14 +129,13 @@ namespace menu {
                     s.l + s.w / 2 - s.downArrow.width / 2,
                     s.t + s.h - s.downArrow.height - 2);
             }
-            // TODO: Shadow effect w/ gray dots?
+            // TODO: Shadow effect w/ gray dots off right and bottom sides
             // TODO: incl icon in math, draw it
             // hide arrow if not in focus? trivial but not sure if it would be helpful
             this.count++;
         }
 
         action(button: ButtonId) {
-            const c = this.contents.length;
             switch (button) {
                 case ButtonId.A: {
                     let selectedElement = this.contents[this.c];
@@ -151,7 +153,7 @@ namespace menu {
                         this.c -= 2;
                     } else {
                         const curr = this.c;
-                        this.c = c - 1;
+                        this.c = this.contents.length - 1;
                         if ((this.c % 2 == 0) !== (curr == 0)) {
                             this.c -= 1;
                         }
@@ -160,9 +162,9 @@ namespace menu {
                     break;
                 }
                 case ButtonId.Down: {
-                    if (this.c + 2 < c) {
+                    if (this.c + 2 < this.contents.length) {
                         this.c += 2;
-                    } else if (this.c + 1 < c && this.c % 2 == 1) {
+                    } else if (this.c + 1 < this.contents.length && this.c % 2 == 1) {
                         this.c += 1;
                     } else {
                         this.c = this.c % 2;
@@ -175,7 +177,7 @@ namespace menu {
                             this.c -= 1;
                         }
                     } else {
-                        if (this.c + 1 < c) {
+                        if (this.c + 1 < this.contents.length) {
                             this.c += 1
                         }
                     }
@@ -183,7 +185,7 @@ namespace menu {
                 }
                 case ButtonId.Right: {
                     if (this.c % 2 == 0) {
-                        if (this.c + 1 < c) {
+                        if (this.c + 1 < this.contents.length) {
                             this.c += 1;
                         }
                     } else {
@@ -222,7 +224,7 @@ namespace menu {
                         core.setFocus(new BattleItem())
                     }
                 }, {
-                    text: "Corg",
+                    text: "Sucro",
                     h: null
                 }, {
                     text: "Flee",
