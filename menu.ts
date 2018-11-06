@@ -110,7 +110,7 @@ namespace menu {
                         const arrow = element.customSelect ? element.customSelect : s.selectArrow;
                         const x = s.l + (j * s.w / s.cols);
                         const textXOffset = 2 + arrow.width + 1 + (element.icon ? element.icon.width + 1 : 0);
-                        const displayable = Math.floor((itemWidth - textXOffset) / s.f.charWidth); // fix to account for gutter between cols
+                        const displayable = Math.floor((itemWidth - textXOffset) / s.f.charWidth);
 
                         let toDisplay = element.text;
                         // scroll item iff too long to display
@@ -344,9 +344,9 @@ namespace menu {
                 l: x,
                 t: y,
                 w: 60,
-                h: 10,
+                h: 11,
                 rows: 1,
-                offY: 2
+                offY: 3
             };
             super(s);
             this.contents = [
@@ -378,7 +378,6 @@ namespace menu {
                 . 2 2 .
                 2 . . 2
             `
-            // this.style.selectArrow.replace(this.style.ec, this.style.mc);
         }
     }
 }
