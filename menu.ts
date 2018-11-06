@@ -85,6 +85,16 @@ namespace menu {
             if (!this.active) return;
 
             let s = this.style;
+            /**
+             * total width:
+             *      4 (l and r borders)
+             *      s.cols * itemW
+             * itemW:
+             *      s.selectArrow.width()
+             *      + 2 (arrow padding)
+             *      ?+ s.icon.width() + 2
+             *      + s.f.fontWidth() + 1 padding
+             */
             const displayable = (s.w / s.cols - 4) / s.f.charWidth; // fix to account for gutter between cols
 
             draw.util.borderedBox(s.l, s.t,
@@ -98,10 +108,10 @@ namespace menu {
             this.oldDisplay = firstDisplay;
 
             for (let i = 0; i < s.rows; i++) {
-                const y = s.t + s.offY + i * (s.h - s.offY) / s.rows;
-                for (let j = 0; j < s.cols; j++) { // I guess generalize this and the actions to n cols
+                const y = s.t + s.offY + i * (s.h - s.offY) / s.rows; // account for font height
+                for (let j = 0; j < s.cols; j++) { // generalize rendering as described above
                     const curr = s.cols * i + j;
-                    let element = this.contents[firstDisplay + curr];
+                    const element = this.contents[firstDisplay + curr];
                     if (element) {
                         const x = s.l + s.offX + j * s.w / s.cols;
 
@@ -113,7 +123,7 @@ namespace menu {
                         }
 
                         screen.print(toDisplay, x, y, s.mc, s.f);
-                        if (firstDisplay + curr == this.c) {
+                        if (firstDisplay + curr === this.c) {
                             screen.drawTransparentImage(s.selectArrow, x - 3, y + 1)
                         }
                     }
@@ -133,7 +143,6 @@ namespace menu {
             }
             // TODO: Shadow effect w/ gray dots off right and bottom sides
             // TODO: incl icon in math, draw it
-            // hide arrow if not in focus? trivial but not sure if it would be helpful
             this.count++;
         }
 
@@ -249,7 +258,7 @@ namespace menu {
                 w: 120,
                 h: 80,
                 rows: 7,
-                cols: 4
+                cols: 3
             }
             super(s);
             this.contents = [
