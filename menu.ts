@@ -2,7 +2,7 @@ namespace menu {
     interface item {
         text: string;
         h: () => void;
-        icon?: Image;
+        icon: Image;
     }
 
     interface MenuStyle {
@@ -240,15 +240,18 @@ namespace menu {
             this.contents = [
                 {
                     text: "Move",
-                    h: null
+                    h: null,
+                    icon: undefined
                 }, {
                     text: "Item",
                     h: () => {
                         core.setFocus(new BattleItem())
-                    }
+                    },
+                    icon: undefined
                 }, {
                     text: "Sucro",
-                    h: null
+                    h: null,
+                    icon: undefined
                 }, {
                     text: "Flee",
                     h: () => {
@@ -257,7 +260,8 @@ namespace menu {
                             // implement exit; % chance to super.bAction();
                             // otherwise displ "failed to flee" message
                         }));
-                    }
+                    },
+                    icon: undefined
                 }
             ];
             // <test>
@@ -299,22 +303,28 @@ namespace menu {
             this.contents = [
                 {
                     text: "Potion",
-                    h: null
+                    h: null,
+                    icon: undefined
                 }, {
                     text: "Cactus",
-                    h: null
+                    h: null,
+                    icon: undefined
                 }, {
                     text: "Potato",
-                    h: null
+                    h: null,
+                    icon: undefined
                 }, {
                     text: "Berry",
-                    h: null
+                    h: null,
+                    icon: undefined
                 }, {
                     text: "Antidote",
-                    h: null
+                    h: null,
+                    icon: undefined
                 }, {
                     text: "Ball",
-                    h: null
+                    h: null,
+                    icon: undefined
                 }
             ];
 
@@ -328,7 +338,8 @@ namespace menu {
                 this.contents.push(
                     {
                         text: lorem,
-                        h: null
+                        h: null,
+                        icon: undefined
                     }
                 );
             }
@@ -354,12 +365,14 @@ namespace menu {
                     h: () => {
                         core.popFocus();
                         h();
-                    }
+                    },
+                    icon: undefined
                 }, {
                     text: "No",
                     h: () => {
                         core.popFocus();
-                    }
+                    },
+                    icon: undefined
                 }
             ];
         }
