@@ -157,7 +157,7 @@ namespace menu {
                     break;
                 }
                 case ButtonId.B: {
-                    this.backOut();
+                    this.bAction();
                     break;
                 }
                 case ButtonId.Up: {
@@ -175,7 +175,7 @@ namespace menu {
                 }
                 case ButtonId.Down: {
                     if (this.c + s.cols < this.contents.length) {
-                         // bump down one row if you can
+                        // bump down one row if you can
                         this.c += s.cols;
                     } else if (Math.floor((this.contents.length - 1) / s.cols) != Math.floor(this.c / s.cols)) {
                         // else bump down to highest element of next row if one exists
@@ -212,9 +212,11 @@ namespace menu {
         }
 
         // Override to modify behavior for `b`
-        backOut() {
+        bAction() {
             core.popFocus();
         }
+
+        // add menu action that pops focus by default as well
     }
 
     export class BattleCore extends Menu {
@@ -244,7 +246,7 @@ namespace menu {
                     h: () => {
                         core.setFocus(new Confirmation(screen.width / 2 - 22, screen.height / 2 + 15, () => {
                             console.log("Failed to flee!");
-                            // implement exit; % chance to super.backOut();
+                            // implement exit; % chance to super.bAction();
                             // otherwise displ "failed to flee" message
                         }));
                     }
@@ -324,12 +326,14 @@ namespace menu {
                 {
                     text: "Yes",
                     h: () => {
-                        this.backOut()
+                        core.popFocus();
                         h();
                     }
                 }, {
                     text: "No",
-                    h: () => { this.backOut() }
+                    h: () => {
+                        core.popFocus();
+                    }
                 }
             ];
         }
