@@ -3,6 +3,7 @@ namespace menu {
         text: string;
         h: () => void;
         icon: Image;
+        customSelect?: Image;
     }
 
     interface MenuStyle {
@@ -39,7 +40,6 @@ namespace menu {
 
             // potentially change these to === undefined checks, when that gets fixed
             if (!s.cols) s.cols = 2;
-            // if (!s.offX) s.offX = 5;
             if (!s.offY) s.offY = 7;
             if (!s.mc) s.mc = 0xF;
             if (!s.bc) s.bc = 0x1;
@@ -85,16 +85,6 @@ namespace menu {
             if (!this.active) return;
 
             let s = this.style;
-            /**
-             * total width:
-             *      4 (l and r borders)
-             *      s.cols * itemW
-             * itemW:
-             *      s.selectArrow.width()
-             *      + 2 (arrow padding)
-             *      ?+ s.icon.width() + 2
-             *      + s.f.fontWidth() + 1 padding
-             */
             const itemWidth = (s.w - 4) / s.cols;
 
             draw.util.borderedBox(s.l, s.t,
@@ -111,13 +101,15 @@ namespace menu {
             this.oldDisplay = firstDisplay;
 
             for (let i = 0; i < s.rows; i++) {
-                const y = s.t + s.offY + i * (s.h - s.offY) / s.rows; // account for font height
-                for (let j = 0; j < s.cols; j++) { // generalize rendering as described above
+                const rowHeight = (s.h - s.offY) / s.rows;
+                const y = s.t + s.offY + i * rowHeight;
+                for (let j = 0; j < s.cols; j++) {
                     const curr = s.cols * i + j;
                     const element = this.contents[firstDisplay + curr];
                     if (element) {
+                        const arrow = element.customSelect ? element.customSelect : s.selectArrow;
                         const x = s.l + (j * s.w / s.cols);
-                        const textXOffset = 2 + s.selectArrow.width + 1 + (element.icon ? element.icon.width + 1 : 0);
+                        const textXOffset = 2 + arrow.width + 1 + (element.icon ? element.icon.width + 1 : 0);
                         const displayable = Math.floor((itemWidth - textXOffset) / s.f.charWidth); // fix to account for gutter between cols
 
                         let toDisplay = element.text;
@@ -128,11 +120,11 @@ namespace menu {
                         }
 
                         if (element.icon) {
-                            screen.drawTransparentImage(element.icon, x + 3 + s.selectArrow.width, y);
+                            screen.drawTransparentImage(element.icon, x + 2 + arrow.width + 1, y + (s.f.charHeight - element.icon.height) / 2);
                         }
                         screen.print(toDisplay, x + textXOffset, y, s.mc, s.f);
                         if (firstDisplay + curr === this.c) {
-                            screen.drawTransparentImage(s.selectArrow, x + 2, y + 1)
+                            screen.drawTransparentImage(arrow, x + 2, y + (s.f.charHeight - arrow.height) / 2);
                         }
                     }
                 }
@@ -150,7 +142,6 @@ namespace menu {
                     s.t + s.h - s.downArrow.height - 2);
             }
             // TODO: Shadow effect w/ gray dots off right and bottom sides iff this = top element
-            // TODO: incl icon in math, draw it
             this.count++;
         }
 
@@ -352,10 +343,9 @@ namespace menu {
             const s: MenuStyle = {
                 l: x,
                 t: y,
-                w: 45,
+                w: 60,
                 h: 10,
                 rows: 1,
-                // offX: 5,
                 offY: 2
             };
             super(s);
@@ -375,6 +365,20 @@ namespace menu {
                     icon: undefined
                 }
             ];
+
+            this.contents[0].customSelect = img`
+                . . . . 7
+                7 . . 7 .
+                . 7 7 . .
+                . 7 . . .
+            `
+            this.contents[1].customSelect = img`
+                2 . . 2
+                . 2 2 .
+                . 2 2 .
+                2 . . 2
+            `
+            // this.style.selectArrow.replace(this.style.ec, this.style.mc);
         }
     }
 }
