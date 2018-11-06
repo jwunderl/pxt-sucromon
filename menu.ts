@@ -1,17 +1,3 @@
-enum ButtonId {
-    A,
-    B,
-    Up,
-    Right,
-    Down,
-    Left
-}
-
-interface Element {
-    render(): void;
-    action?(b: ButtonId): void;
-}
-
 namespace menu {
     interface item {
         text: string;
