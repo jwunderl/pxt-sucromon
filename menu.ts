@@ -13,7 +13,7 @@ namespace menu {
         rows: number;
         cols?: number;
 
-        offX?: number; // x offset from left
+        // offX?: number; // x offset from left
         offY?: number; // y offset from top
 
         mc?: number; // border and text color
@@ -39,7 +39,7 @@ namespace menu {
 
             // potentially change these to === undefined checks, when that gets fixed
             if (!s.cols) s.cols = 2;
-            if (!s.offX) s.offX = 5;
+            // if (!s.offX) s.offX = 5;
             if (!s.offY) s.offY = 7;
             if (!s.mc) s.mc = 0xF;
             if (!s.bc) s.bc = 0x1;
@@ -95,13 +95,16 @@ namespace menu {
              *      ?+ s.icon.width() + 2
              *      + s.f.fontWidth() + 1 padding
              */
-            const displayable = (s.w / s.cols - 4) / s.f.charWidth; // fix to account for gutter between cols
+            const itemWidth = (s.w - 4) / s.cols;
 
             draw.util.borderedBox(s.l, s.t,
                 s.w, s.h,
                 s.mc, s.bc);
 
-            const firstDisplay = this.c / s.cols >= s.rows ? this.c - (this.c % (s.cols * s.rows)) : 0;
+            const firstDisplay = this.c / s.cols >= s.rows ?
+                this.c - (this.c % (s.cols * s.rows))
+                :
+                0;
 
             // reset count on view change
             if (this.oldDisplay != firstDisplay) this.count = 0;
@@ -113,7 +116,9 @@ namespace menu {
                     const curr = s.cols * i + j;
                     const element = this.contents[firstDisplay + curr];
                     if (element) {
-                        const x = s.l + s.offX + j * s.w / s.cols;
+                        const x = s.l + (j * s.w / s.cols);
+                        const textXOffset = 2 + s.selectArrow.width + 1 + (element.icon ? element.icon.width + 1 : 0);
+                        const displayable = Math.floor((itemWidth - textXOffset) / s.f.charWidth); // fix to account for gutter between cols
 
                         let toDisplay = element.text;
                         // scroll item iff too long to display
@@ -122,9 +127,12 @@ namespace menu {
                             toDisplay = toDisplay.substr((firstInd < 3 ? 0 : firstInd - 3), displayable);
                         }
 
-                        screen.print(toDisplay, x, y, s.mc, s.f);
+                        if (element.icon) {
+                            screen.drawTransparentImage(element.icon, x + 3 + s.selectArrow.width, y);
+                        }
+                        screen.print(toDisplay, x + textXOffset, y, s.mc, s.f);
                         if (firstDisplay + curr === this.c) {
-                            screen.drawTransparentImage(s.selectArrow, x - 3, y + 1)
+                            screen.drawTransparentImage(s.selectArrow, x + 2, y + 1)
                         }
                     }
                 }
@@ -252,6 +260,24 @@ namespace menu {
                     }
                 }
             ];
+            // <test>
+            for (let i = 0; i < this.contents.length; i++) {
+                // this.contents[i].icon = img`
+                // 2 . . 2 .
+                // 2 2 2 2 2
+                // 2 2 2 2 2
+                // 2 2 2 2 2
+                // 2 . . 2 .
+                // `
+                this.contents[i].icon = img`
+                2
+                2
+                2
+                2
+                2
+                `
+            }
+            // </ test>
         }
 
         backOut() {
@@ -318,7 +344,7 @@ namespace menu {
                 w: 45,
                 h: 10,
                 rows: 1,
-                offX: 5,
+                // offX: 5,
                 offY: 2
             };
             super(s);
