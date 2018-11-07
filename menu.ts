@@ -11,10 +11,9 @@ namespace menu {
         t: number; // top
         w: number; // width
         h: number; // height
+
         rows: number;
         cols?: number;
-
-        // offX?: number; // x offset from left
         offY?: number; // y offset from top
 
         mc?: number; // border and text color
@@ -288,7 +287,7 @@ namespace menu {
                 w: 120,
                 h: 80,
                 rows: 7,
-                cols: 3
+                cols: 2
             }
             super(s);
             this.contents = [
@@ -356,28 +355,27 @@ namespace menu {
                         core.popFocus();
                         h();
                     },
-                    icon: undefined
+                    icon: undefined,
+                    customSelect: img`
+                        . . . . 7
+                        7 . . 7 .
+                        . 7 7 . .
+                        . 7 . . .
+                    `
                 }, {
                     text: "No",
                     h: () => {
                         core.popFocus();
                     },
-                    icon: undefined
+                    icon: undefined,
+                    customSelect: img`
+                        2 . . 2
+                        . 2 2 .
+                        . 2 2 .
+                        2 . . 2
+                    `
                 }
             ];
-
-            this.contents[0].customSelect = img`
-                . . . . 7
-                7 . . 7 .
-                . 7 7 . .
-                . 7 . . .
-            `
-            this.contents[1].customSelect = img`
-                2 . . 2
-                . 2 2 .
-                . 2 2 .
-                2 . . 2
-            `
         }
     }
 }
