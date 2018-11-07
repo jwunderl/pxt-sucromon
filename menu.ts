@@ -43,6 +43,7 @@ namespace menu {
             if (!s.mc) s.mc = 0xF;
             if (!s.bc) s.bc = 0x1;
             if (!s.ec) s.ec = 0x7;
+            if (!s.f) s.f = image.font5;
 
             if (!s.upArrow) {
                 s.upArrow = img`
@@ -69,9 +70,6 @@ namespace menu {
                     F .
                 `
                 s.selectArrow.replace(0xF, s.ec);
-            }
-            if (!s.f) {
-                s.f = image.font5;
             }
 
             this.count = 0;

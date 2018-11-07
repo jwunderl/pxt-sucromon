@@ -14,7 +14,7 @@ namespace status {
         render() {
             const bf = image.font8;
             const sf = image.font5;
-            const hp = this.m.currHealth / this.m.maxHealth;
+            const hp = Math.min(this.m.currHealth / this.m.maxHealth, this.m.maxHealth);
             const fc = 0xF; // font color
             let h = this.y;
             screen.print(this.m.name, this.x, h, fc, bf);
