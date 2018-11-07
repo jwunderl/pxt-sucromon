@@ -2,7 +2,7 @@ namespace menu {
     interface item {
         text: string;
         h: () => void;
-        icon: Image;
+        icon?: Image;
         customSelect?: Image;
     }
 
@@ -11,10 +11,9 @@ namespace menu {
         t: number; // top
         w: number; // width
         h: number; // height
+
         rows: number;
         cols?: number;
-
-        // offX?: number; // x offset from left
         offY?: number; // y offset from top
 
         mc?: number; // border and text color
@@ -231,7 +230,7 @@ namespace menu {
             this.contents = [
                 {
                     text: "Move",
-                    h: null,
+                    h: undefined,
                     icon: undefined
                 }, {
                     text: "Item",
@@ -241,7 +240,7 @@ namespace menu {
                     icon: undefined
                 }, {
                     text: "Sucro",
-                    h: null,
+                    h: undefined,
                     icon: undefined
                 }, {
                     text: "Flee",
@@ -255,6 +254,7 @@ namespace menu {
                     icon: undefined
                 }
             ];
+            
             // <test>
             for (let i = 0; i < this.contents.length; i++) {
                 // this.contents[i].icon = img`
@@ -288,33 +288,33 @@ namespace menu {
                 w: 120,
                 h: 80,
                 rows: 7,
-                cols: 3
+                cols: 2
             }
             super(s);
             this.contents = [
                 {
                     text: "Potion",
-                    h: null,
+                    h: undefined,
                     icon: undefined
                 }, {
                     text: "Cactus",
-                    h: null,
+                    h: undefined,
                     icon: undefined
                 }, {
                     text: "Potato",
-                    h: null,
+                    h: undefined,
                     icon: undefined
                 }, {
                     text: "Berry",
-                    h: null,
+                    h: undefined,
                     icon: undefined
                 }, {
                     text: "Antidote",
-                    h: null,
+                    h: undefined,
                     icon: undefined
                 }, {
                     text: "Ball",
-                    h: null,
+                    h: undefined,
                     icon: undefined
                 }
             ];
@@ -329,7 +329,7 @@ namespace menu {
                 this.contents.push(
                     {
                         text: lorem,
-                        h: null,
+                        h: undefined,
                         icon: undefined
                     }
                 );
@@ -356,28 +356,27 @@ namespace menu {
                         core.popFocus();
                         h();
                     },
-                    icon: undefined
+                    icon: undefined,
+                    customSelect: img`
+                        . . . . 7
+                        7 . . 7 .
+                        . 7 7 . .
+                        . 7 . . .
+                    `
                 }, {
                     text: "No",
                     h: () => {
                         core.popFocus();
                     },
-                    icon: undefined
+                    icon: undefined,
+                    customSelect: img`
+                        2 . . 2
+                        . 2 2 .
+                        . 2 2 .
+                        2 . . 2
+                    `
                 }
             ];
-
-            this.contents[0].customSelect = img`
-                . . . . 7
-                7 . . 7 .
-                . 7 7 . .
-                . 7 . . .
-            `
-            this.contents[1].customSelect = img`
-                2 . . 2
-                . 2 2 .
-                . 2 2 .
-                2 . . 2
-            `
         }
     }
 }
