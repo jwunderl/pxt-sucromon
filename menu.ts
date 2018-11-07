@@ -2,7 +2,7 @@ namespace menu {
     interface item {
         text: string;
         h: () => void;
-        icon: Image;
+        icon?: Image;
         customSelect?: Image;
     }
 
@@ -230,7 +230,7 @@ namespace menu {
             this.contents = [
                 {
                     text: "Move",
-                    h: null,
+                    h: undefined,
                     icon: undefined
                 }, {
                     text: "Item",
@@ -240,7 +240,7 @@ namespace menu {
                     icon: undefined
                 }, {
                     text: "Sucro",
-                    h: null,
+                    h: undefined,
                     icon: undefined
                 }, {
                     text: "Flee",
@@ -254,6 +254,7 @@ namespace menu {
                     icon: undefined
                 }
             ];
+            
             // <test>
             for (let i = 0; i < this.contents.length; i++) {
                 // this.contents[i].icon = img`
@@ -293,27 +294,27 @@ namespace menu {
             this.contents = [
                 {
                     text: "Potion",
-                    h: null,
+                    h: undefined,
                     icon: undefined
                 }, {
                     text: "Cactus",
-                    h: null,
+                    h: undefined,
                     icon: undefined
                 }, {
                     text: "Potato",
-                    h: null,
+                    h: undefined,
                     icon: undefined
                 }, {
                     text: "Berry",
-                    h: null,
+                    h: undefined,
                     icon: undefined
                 }, {
                     text: "Antidote",
-                    h: null,
+                    h: undefined,
                     icon: undefined
                 }, {
                     text: "Ball",
-                    h: null,
+                    h: undefined,
                     icon: undefined
                 }
             ];
@@ -328,7 +329,7 @@ namespace menu {
                 this.contents.push(
                     {
                         text: lorem,
-                        h: null,
+                        h: undefined,
                         icon: undefined
                     }
                 );
