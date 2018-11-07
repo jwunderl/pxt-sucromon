@@ -254,7 +254,7 @@ namespace menu {
                     icon: undefined
                 }
             ];
-            
+
             // <test>
             for (let i = 0; i < this.contents.length; i++) {
                 // this.contents[i].icon = img`
