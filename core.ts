@@ -20,6 +20,14 @@ namespace core {
     export function initUI() {
         hud = [];
         focusStack = [];
+        
+        // handle continuous presses more appropriately? repeat every 250 ~ 500 ms?
+        controller.A.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.A));
+        controller.B.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.B));
+        controller.left.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.Left));
+        controller.right.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.Right));
+        controller.up.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.Up));
+        controller.down.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.Down));
     }
 
     export function setFocus(e: Element) {
@@ -31,14 +39,6 @@ namespace core {
     export function popFocus() {
         if (!focusStack.length) return;
         focus = focusStack.pop();
-
-        // handle continuous presses more appropriately? repeat every 250 ~ 500 ms?
-        controller.A.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.A));
-        controller.B.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.B));
-        controller.left.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.Left));
-        controller.right.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.Right));
-        controller.up.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.Up));
-        controller.down.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.Down));
     }
 
     export function destroy(e: Element) {
