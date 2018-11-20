@@ -26,7 +26,7 @@ namespace menu {
         f?: image.Font;
     }
 
-    export class Menu implements Element {
+    export class MonsterMenu implements Element {
         protected style: MenuStyle;
         protected c: number; // currently selected item
         protected contents: item[];
@@ -37,7 +37,6 @@ namespace menu {
         constructor(s: MenuStyle) {
             this.style = s;
 
-            // potentially change these to === undefined checks, when that gets fixed
             if (!s.cols) s.cols = 2;
             if (!s.offY) s.offY = 7;
             if (!s.mc) s.mc = 0xF;
@@ -142,21 +141,21 @@ namespace menu {
             this.count++;
         }
 
-        action(button: ButtonId) {
+        action(button: number) {
             const s = this.style;
             switch (button) {
-                case ButtonId.A: {
+                case controller.A.id: {
                     let selectedElement = this.contents[this.c];
                     if (selectedElement.h) {
                         selectedElement.h();
                     }
                     break;
                 }
-                case ButtonId.B: {
+                case controller.B.id: {
                     this.bAction();
                     break;
                 }
-                case ButtonId.Up: {
+                case controller.up.id: {
                     if (this.c - s.cols >= 0) {
                         // bump up if you can
                         this.c -= s.cols;
@@ -169,7 +168,7 @@ namespace menu {
                     }
                     break;
                 }
-                case ButtonId.Down: {
+                case controller.down.id: {
                     if (this.c + s.cols < this.contents.length) {
                         // bump down one row if you can
                         this.c += s.cols;
@@ -182,7 +181,7 @@ namespace menu {
                     }
                     break;
                 }
-                case ButtonId.Left: {
+                case controller.left.id: {
                     if (this.c % s.cols !== 0) {
                         // move left if possible
                         if (this.c - 1 >= 0) {
@@ -194,7 +193,7 @@ namespace menu {
                     }
                     break;
                 }
-                case ButtonId.Right: {
+                case controller.right.id: {
                     if (this.c % s.cols === s.cols - 1 || this.c >= this.contents.length - 1) {
                         // bump around to leftmost col in this row if in rightmost col
                         this.c -= this.c % s.cols;
@@ -215,7 +214,7 @@ namespace menu {
         // add menu action that pops focus by default as well
     }
 
-    export class BattleCore extends Menu {
+    export class BattleCore extends MonsterMenu {
         constructor() {
             const s: MenuStyle = {
                 l: 80,
@@ -278,7 +277,7 @@ namespace menu {
         }
     }
 
-    export class BattleItem extends Menu {
+    export class BattleItem extends MonsterMenu {
         constructor() {
             const s: MenuStyle = {
                 l: 20,
@@ -336,7 +335,7 @@ namespace menu {
         }
     }
 
-    export class Confirmation extends Menu {
+    export class Confirmation extends MonsterMenu {
         constructor(x: number, y: number, h: () => void) {
             const s: MenuStyle = {
                 l: x,

@@ -1,12 +1,3 @@
-enum ButtonId {
-    A,
-    B,
-    Up,
-    Right,
-    Down,
-    Left
-}
-
 interface Element {
     render(): void;
     action?(b: ButtonId): void;
@@ -20,14 +11,20 @@ namespace core {
     export function initUI() {
         hud = [];
         focusStack = [];
-        
-        // handle continuous presses more appropriately? repeat every 250 ~ 500 ms?
-        controller.A.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.A));
-        controller.B.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.B));
-        controller.left.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.Left));
-        controller.right.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.Right));
-        controller.up.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.Up));
-        controller.down.onEvent(ControllerButtonEvent.Pressed, handleInput(ButtonId.Down));
+
+        [
+            controller.A,
+            controller.B,
+            controller.left,
+            controller.right,
+            controller.up,
+            controller.down
+        ].forEach(b => {
+            b.onEvent(ControllerButtonEvent.Pressed, handleInput(b.id));
+            b.onEvent(ControllerButtonEvent.Repeated, handleInput(b.id));
+            b.repeatDelay = 500;
+            b.repeatInterval = 350;
+        });
     }
 
     export function setFocus(e: Element) {
@@ -66,7 +63,7 @@ namespace core {
         }
     }
 
-    function handleInput(button: ButtonId) {
+    function handleInput(button: number) {
         return () => (focus && focus.action(button));
     }
 }
