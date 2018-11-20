@@ -1,6 +1,6 @@
 interface Element {
     render(): void;
-    action?(b: ButtonId): void;
+    action?(b: number): void;
 }
 
 namespace core {
