@@ -12,21 +12,20 @@ namespace status {
         }
 
         render() {
-            const bf = image.font8;
-            const sf = image.font5;
-            const hp = Math.min(this.m.currHealth / this.m.maxHealth, this.m.maxHealth);
             const fc = 0xF; // font color
+            const barWidth = 60;
             let h = this.y;
-            screen.print(this.m.name, this.x, h, fc, bf);
-            h += bf.charHeight + 2;
+            
+            screen.print(this.m.name, this.x, h, fc, image.font8);
+            h += image.font8.charHeight + 2;
 
-            screen.print("lvl: " + this.m.level, this.x + 10, h, fc, sf);
-            h += sf.charHeight + 2;
+            screen.print("lvl: " + this.m.level, this.x + 10, h, fc, image.font5);
+            h += image.font5.charHeight + 2;
 
             // outline for life
-            draw.util.borderedBox(this.x, h, 60, 5, 0xF, 0x2);
+            draw.util.borderedBox(this.x, h, barWidth + 2, 5, 0xF, 0x2);
             // fill life pct
-            screen.fillRect(this.x + 1, h + 1, Math.clamp(0, 58, 58 * hp), 3, 0x7);
+            screen.fillRect(this.x + 1, h + 1, Math.clamp(0, barWidth, barWidth * this.m.currHealth / this.m.maxHealth), 3, 0x7);
         }
     }
 }

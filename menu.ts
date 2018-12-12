@@ -28,11 +28,12 @@ namespace menu {
 
     export class MonsterMenu implements Element {
         protected style: MenuStyle;
-        protected c: number; // currently selected item
+        protected curr: number;
         protected contents: item[];
         protected active: boolean;
         protected count: number;
-        private oldDisplay: number;
+
+        private oldDisplay: number; // for tracking whether view has changed
 
         constructor(s: MenuStyle) {
             this.style = s;
@@ -73,7 +74,7 @@ namespace menu {
 
             this.count = 0;
             this.active = true;
-            this.c = 0;
+            this.curr = 0;
             this.oldDisplay = 0;
         }
 
@@ -87,8 +88,8 @@ namespace menu {
                 s.w, s.h,
                 s.mc, s.bc);
 
-            const firstDisplay = this.c / s.cols >= s.rows ?
-                this.c - (this.c % (s.cols * s.rows))
+            const firstDisplay = this.curr / s.cols >= s.rows ?
+                this.curr - (this.curr % (s.cols * s.rows))
                 :
                 0;
 
@@ -99,9 +100,10 @@ namespace menu {
             for (let i = 0; i < s.rows; i++) {
                 const rowHeight = (s.h - s.offY) / s.rows;
                 const y = s.t + s.offY + i * rowHeight;
+
                 for (let j = 0; j < s.cols; j++) {
-                    const curr = s.cols * i + j;
-                    const element = this.contents[firstDisplay + curr];
+                    const c = s.cols * i + j;
+                    const element = this.contents[firstDisplay + c];
                     if (element) {
                         const arrow = element.customSelect ? element.customSelect : s.selectArrow;
                         const x = s.l + (j * s.w / s.cols);
@@ -119,7 +121,7 @@ namespace menu {
                             screen.drawTransparentImage(element.icon, x + 2 + arrow.width + 1, y + (s.f.charHeight - element.icon.height) / 2);
                         }
                         screen.print(toDisplay, x + textXOffset, y, s.mc, s.f);
-                        if (firstDisplay + curr === this.c) {
+                        if (firstDisplay + c == this.curr) {
                             screen.drawTransparentImage(arrow, x + 2, y + (s.f.charHeight - arrow.height) / 2);
                         }
                     }
@@ -145,7 +147,7 @@ namespace menu {
             const s = this.style;
             switch (button) {
                 case controller.A.id: {
-                    let selectedElement = this.contents[this.c];
+                    let selectedElement = this.contents[this.curr];
                     if (selectedElement.h) {
                         selectedElement.h();
                     }
@@ -156,50 +158,50 @@ namespace menu {
                     break;
                 }
                 case controller.up.id: {
-                    if (this.c - s.cols >= 0) {
+                    if (this.curr - s.cols >= 0) {
                         // bump up if you can
-                        this.c -= s.cols;
+                        this.curr -= s.cols;
                     } else {
                         // otherwise find lowest element in same col
-                        this.c = Math.floor((this.contents.length - 1) / s.cols) * s.cols + this.c;
-                        if (this.c >= this.contents.length) {
-                            this.c -= s.cols;
+                        this.curr = Math.floor((this.contents.length - 1) / s.cols) * s.cols + this.curr;
+                        if (this.curr >= this.contents.length) {
+                            this.curr -= s.cols;
                         }
                     }
                     break;
                 }
                 case controller.down.id: {
-                    if (this.c + s.cols < this.contents.length) {
+                    if (this.curr + s.cols < this.contents.length) {
                         // bump down one row if you can
-                        this.c += s.cols;
-                    } else if (Math.floor((this.contents.length - 1) / s.cols) != Math.floor(this.c / s.cols)) {
+                        this.curr += s.cols;
+                    } else if (Math.floor((this.contents.length - 1) / s.cols) != Math.floor(this.curr / s.cols)) {
                         // else bump down to highest element of next row if one exists
-                        this.c = this.contents.length - 1;
+                        this.curr = this.contents.length - 1;
                     } else {
                         // else return to element in same col in row 0
-                        this.c = this.c % s.cols;
+                        this.curr = this.curr % s.cols;
                     }
                     break;
                 }
                 case controller.left.id: {
-                    if (this.c % s.cols !== 0) {
+                    if (this.curr % s.cols !== 0) {
                         // move left if possible
-                        if (this.c - 1 >= 0) {
-                            this.c -= 1;
+                        if (this.curr - 1 >= 0) {
+                            this.curr -= 1;
                         }
-                    } else if (this.c + 1 < this.contents.length) {
+                    } else if (this.curr + 1 < this.contents.length) {
                         // if in col 0, bump around to the right most col in this row
-                        this.c = Math.min(this.c + s.cols - 1, this.contents.length - 1);
+                        this.curr = Math.min(this.curr + s.cols - 1, this.contents.length - 1);
                     }
                     break;
                 }
                 case controller.right.id: {
-                    if (this.c % s.cols === s.cols - 1 || this.c >= this.contents.length - 1) {
+                    if (this.curr % s.cols === s.cols - 1 || this.curr >= this.contents.length - 1) {
                         // bump around to leftmost col in this row if in rightmost col
-                        this.c -= this.c % s.cols;
-                    } else if (this.c + 1 < this.contents.length) {
+                        this.curr -= this.curr % s.cols;
+                    } else if (this.curr + 1 < this.contents.length) {
                         // else bump right if possible
-                        this.c += 1;
+                        this.curr += 1;
                     }
                     break;
                 }

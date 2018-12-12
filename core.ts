@@ -8,7 +8,8 @@ namespace core {
     let hud: Element[];
     let focusStack: Element[];
 
-    export function initUI() {
+    function initUI() {
+        if (focusStack != undefined) return;
         hud = [];
         focusStack = [];
 
@@ -28,25 +29,30 @@ namespace core {
     }
 
     export function setFocus(e: Element) {
+        initUI();
         if (focus) focusStack.push(focus);
         focusStack.push(e);
         popFocus();
     }
 
     export function popFocus() {
+        initUI();
         if (!focusStack.length) return;
         focus = focusStack.pop();
     }
 
     export function destroy(e: Element) {
+        initUI();
         hud.removeElement(e);
     }
 
     export function addToView(e: Element) {
+        initUI();
         hud.push(e);
     }
 
     export function render() {
+        initUI();
         // Menus, game elements
         for (let e of focusStack) {
             e.render();
